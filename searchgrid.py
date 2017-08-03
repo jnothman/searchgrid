@@ -56,7 +56,6 @@ def _build_param_grid(estimator):
 
             part = _update_grid(part, to_update)
         out.extend(part)
-    print(out)
 
     if out == [{}]:
         return None
