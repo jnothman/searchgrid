@@ -52,9 +52,9 @@ as well as a variety of classifiers and their parameters:
     ...               {'clf': [clf3], 'clf__kernel': ['poly'],
     ...                'clf__degree': [2, 3], 'sel__k': [2, 3]},
     ...               {'clf': [clf2, clf4], 'sel__k': [2, 3]}]
-    >>> gscv = make_grid_search(estimator, cv=10)
+    >>> gscv = make_grid_search(estimator, cv=10, scoring='accuracy')
     >>> # assert gscv == param_grid  # Note sure why this comparison is failing
     >>> X, y = load_iris(return_X_y=True)
-    >>> gscv.fit(X, y)
+    >>> gscv.fit(X, y)  # doctest: +ELLIPSIS
     GridSearchCV(...)
     >>> # pd.DataFrame(gscv.cv_results_)
