@@ -11,21 +11,22 @@ from searchgrid import set_grid, build_param_grid
      {'C': [1, 2]}),
     (set_grid(SVC(), C=[1, 2], gamma=[1, 2]),
      {'C': [1, 2], 'gamma': [1, 2]}),
-###    pytest.mark.xfail(
-###        (set_grid(SVC(), [{'kernel': ['linear']},
-###                          {'kernel': 'rbf', 'gamma': [1, 2]}]),
-###         [{'kernel': ['linear']}, {'kernel': 'rbf', 'gamma': [1, 2]}])),
     (make_pipeline(set_grid(SVC(), C=[1, 2], gamma=[1, 2])),
      {'svc__C': [1, 2], 'svc__gamma': [1, 2]}),
-###    pytest.mark.xfail(
-###        (make_pipeline(set_grid(SVC(), [{'kernel': ['linear']},
-###                                        {'kernel': ['rbf'],
-###                                         'gamma': [1, 2]}])),
-###         [{'svc__kernel': ['linear']},
-###          {'svc__kernel': 'rbf', 'svc__gamma': [1, 2]}])),
 ])
 def test_build_param_grid(estimator, param_grid):
     assert build_param_grid(estimator) == param_grid
+
+#    pytest.mark.xfail(
+#        (set_grid(SVC(), [{'kernel': ['linear']},
+#                          {'kernel': 'rbf', 'gamma': [1, 2]}]),
+#         [{'kernel': ['linear']}, {'kernel': 'rbf', 'gamma': [1, 2]}])),
+#    pytest.mark.xfail(
+#        (make_pipeline(set_grid(SVC(), [{'kernel': ['linear']},
+#                                        {'kernel': ['rbf'],
+#                                         'gamma': [1, 2]}])),
+#         [{'svc__kernel': ['linear']},
+#          {'svc__kernel': 'rbf', 'svc__gamma': [1, 2]}])),
 
 
 def test_build_param_grid_set_estimator():
