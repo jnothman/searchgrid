@@ -13,10 +13,12 @@ def setup_package():
 
     try:
         # See setup.cfg
-        setup(py_modules=['searchgrid'],
+        setup(name='searchgrid',
+              version='0.1a1',
+              py_modules=['searchgrid'],
               setup_requires=['pytest-runner'],
               tests_require=['pytest>=2.7', 'pytest-cov~=2.4'],
-              install_requires=['scikit-learn~=0.18'])
+              install_requires=['numpy', 'scipy', 'scikit-learn~=0.18'])
     finally:
         del sys.path[0]
         os.chdir(old_path)
