@@ -1,8 +1,16 @@
-``searchgrid`` helpers for building parameter grids for scikit-learn grid search
-================================================================================
+``searchgrid`` documentation
+============================
+
+Helps building parameter grids for :ref:`scikit-learn grid search
+<scikit-learn:grid_search>`.
+
+|version| |licence| |py-versions|
+
+|build| |docs| |coverage|
+
 
 Specifying a parameter grid for
-`GridSearchCV <http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html>`__
+:class:`~sklearn.model_selection.GridSearchCV`
 in Scikit-Learn can be annoying, particularly when:
 
 -  you change your code to wrap some estimator in, say, a ``Pipeline``
@@ -58,3 +66,27 @@ as well as a variety of classifiers and their parameters:
     >>> gscv.fit(X, y)  # doctest: +ELLIPSIS
     GridSearchCV(...)
     >>> # pd.DataFrame(gscv.cv_results_)
+
+.. |py-versions| image:: https://img.shields.io/pypi/pyversions/Django.svg
+    :alt: Python versions supported
+
+.. |version| image:: https://badge.fury.io/py/searchgrid.svg
+    :alt: Latest version on PyPi
+    :target: https://badge.fury.io/py/searchgrid
+
+.. |build| image:: https://travis-ci.org/jnothman/searchgrid.svg?branch=master
+    :alt: Travis CI build status
+    :scale: 100%
+    :target: https://travis-ci.org/jnothman/searchgrid
+
+.. |coverage| image:: https://coveralls.io/repos/github/jnothman/searchgrid/badge.svg
+    :alt: Test coverage
+    :target: https://coveralls.io/github/jnothman/searchgrid
+
+.. |docs| image:: https://readthedocs.org/projects/searchgrid/badge/?version=latest
+     :alt: Documentation Status
+     :scale: 100%
+     :target: https://searchgrid.readthedocs.io/en/latest/?badge=latest
+
+.. |licence| image:: https://img.shields.io/badge/Licence-BSD-blue.svg
+     :target: https://opensource.org/licenses/BSD-3-Clause

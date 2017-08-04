@@ -5,11 +5,27 @@ from sklearn.model_selection import GridSearchCV as _GridSearchCV
 
 
 def set_grid(estimator, **grid):
+    """Set the grid to search for the specified estimator
+
+    Overwrites any previously set grid.
+
+    Parameters
+    ----------
+    grid : dict (str -> list of values)
+        Keyword arguments define the values to be searched for each specified
+        parameter.
+
+    Returns
+    -------
+    estimator
+        Useful for chaining
+    """
     estimator._param_grid = grid
     return estimator
 
 
 def _update_grid(dest, src, prefix=None):
+    # TODO: needs docs
     if src is None:
         return dest
     if prefix:
@@ -64,6 +80,18 @@ def _build_param_grid(estimator):
 
 
 def build_param_grid(estimator):
+    """Determine the parameter grid annotated on the estimator
+
+    Parameters
+    ----------
+    estimator : scikit-learn compatible estimator
+        Should have been annotated using :func:`set_grid`
+
+    Notes
+    -----
+    Most often, it is unnecessary for this to be used directly, and
+    :func:`make_grid_search` should be used instead.
+    """
     out = _build_param_grid(estimator)
     if out is None:
         return {}
@@ -73,4 +101,13 @@ def build_param_grid(estimator):
 
 
 def make_grid_search(estimator, **kwargs):
+    """Construct a GridSearchCV with the given estimator and its set grid
+
+    Parameters
+    ----------
+    estimator : scikit-learn compatible estimator
+    kwargs
+        Other parameters to the
+        :class:`sklearn.model_selection.GridSearchCV` constructor.
+    """
     return _GridSearchCV(estimator, build_param_grid(estimator), **kwargs)
