@@ -60,7 +60,8 @@ Wrapping an estimator in a pipeline.
         ...                             ('clf', LogisticRegression())]),
         ...                   {'clf__C': [.1, 1, 10]})
 
-    With ``searchgrid`` it's changing::
+    With ``searchgrid`` we only have to wrap our classifier in a Pipeline, and
+    do not have to change the parameter grid, adding the ``clf__`` prefix. From::
 
         >>> lr = set_grid(LogisticRegression(), C=[.1, 1, 10])
         >>> gs = make_grid_search(lr)
@@ -71,8 +72,6 @@ Wrapping an estimator in a pipeline.
         >>> gs = make_grid_search(Pipeline([('reduce', SelectKBest()),
         ...                                 ('clf', lr)]))
 
-    We only had to wrap our classifier in a Pipeline, and did not have to
-    change the parameter grid.
 
 You want to change the estimator being searched in a pipeline.
     With scikit-learn, you have to change::
