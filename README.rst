@@ -8,7 +8,6 @@ Helps building parameter grids for :ref:`scikit-learn grid search
 
 |build| |docs| |coverage|
 
-
 Specifying a parameter grid for
 :class:`~sklearn.model_selection.GridSearchCV`
 in Scikit-Learn can be annoying, particularly when:
@@ -24,48 +23,116 @@ particular estimator object, making it much more straightforward to
 specify complex parameter grids, and means you don't need to update your
 grid when you change the structure of your composite estimator.
 
+``searchgrid`` allows you to define (and change) the grid together with the
+esimator, reducing effort and sometimes code.
+
 It provides two main functions:
 
--  ``set_grid`` is used to specify the parameter values to be searched
-   for an estimator or GP kernel.
--  ``make_grid_search`` is used to construct the ``GridSearchCV`` object
-   with the parameter space the estimator is annotated with.
+-  :func:`searchgrid.set_grid` is used to specify the parameter values to be
+   searched for an estimator or GP kernel.
+-  :func:`searchgrid.make_grid_search` is used to construct the
+   ``GridSearchCV`` object using the parameter space the estimator is annotated
+   with.
 
-``build_param_grid`` is used by ``make_grid_search`` to construct the
-``param_grid`` argument to ``GridSearchCV``.
+Motivating examples
+...................
 
-Let's define a complicated search over the number of selected features
-as well as a variety of classifiers and their parameters:
+Let's look over some of the messy change cases. We'll get some imports out of
+the way.::
 
-.. code:: python
-
-    >>> from sklearn.datasets import load_iris
     >>> from sklearn.pipeline import Pipeline
     >>> from sklearn.linear_model import LogisticRegression
-    >>> from sklearn.svm import SVC
-    >>> from sklearn.ensemble import RandomForestClassifier
     >>> from sklearn.feature_selection import SelectKBest
+    >>> from sklearn.decomposition import PCA
     >>> from searchgrid import set_grid, make_grid_search
-    >>> clf1 = SVC()
-    >>> clf2 = LogisticRegression()
-    >>> clf3 = SVC()
-    >>> clf4 = RandomForestClassifier()
-    >>> estimator = set_grid(Pipeline([('sel', set_grid(SelectKBest(), k=[2, 3])),
-    ...                                ('clf', None)]),
-    ...                      clf=[set_grid(clf1, kernel=['linear']),
-    ...                           clf2,
-    ...                           set_grid(clf3, kernel=['poly'], degree=[2, 3]),
-    ...                           clf4])
-    >>> param_grid = [{'clf': [clf1], 'clf__kernel': ['linear'], 'sel__k': [2, 3]},
-    ...               {'clf': [clf3], 'clf__kernel': ['poly'],
-    ...                'clf__degree': [2, 3], 'sel__k': [2, 3]},
-    ...               {'clf': [clf2, clf4], 'sel__k': [2, 3]}]
-    >>> gscv = make_grid_search(estimator, cv=10, scoring='accuracy')
-    >>> # assert gscv == param_grid  # Note sure why this comparison is failing
-    >>> X, y = load_iris(return_X_y=True)
-    >>> gscv.fit(X, y)  # doctest: +ELLIPSIS
-    GridSearchCV(...)
-    >>> # pd.DataFrame(gscv.cv_results_)
+    >>> from sklearn.model_selection import GridSearchCV
+
+Wrapping an estimator in a pipeline.
+    You had code which searched over parameters for a classifier.
+    Now you want to search for that classifier in a Pipeline.
+    With plain old scikit-learn, you have to change::
+
+        >>> gs = GridSearchCV(LogisticRegression(), {'C': [.1, 1, 10]})
+
+    to::
+
+        >>> gs = GridSearchCV(Pipeline([('reduce', SelectKBest()),
+        ...                             ('clf', LogisticRegression())]),
+        ...                   {'clf__C': [.1, 1, 10]})
+
+    With ``searchgrid`` it's changing::
+
+        >>> lr = set_grid(LogisticRegression(), C=[.1, 1, 10])
+        >>> gs = make_grid_search(lr)
+
+    to::
+
+        >>> lr = set_grid(LogisticRegression(), C=[.1, 1, 10])
+        >>> gs = make_grid_search(Pipeline([('reduce', SelectKBest()),
+        ...                                 ('clf', lr)]))
+
+    We only had to wrap our classifier in a Pipeline, and did not have to
+    change the parameter grid.
+
+You want to change the estimator being searched in a pipeline.
+    With scikit-learn, you have to change::
+
+        >>> pipe = Pipeline([('reduce', SelectKBest()),
+        ...                  ('clf', LogisticRegression())])
+        >>> gs = GridSearchCV(pipe,
+        ...                   {'reduce__k': [5, 10, 20],
+        ...                    'clf__C': [.1, 1, 10]})
+
+    to::
+
+        >>> pipe = Pipeline([('reduce', PCA()),
+        ...                  ('clf', LogisticRegression())])
+        >>> gs = GridSearchCV(pipe,
+        ...                   {'reduce__n_components': [5, 10, 20],
+        ...                    'clf__C': [.1, 1, 10]})
+
+    With ``searchgrid`` it's easier because you change the estimator and the
+    parameters in the same place::
+
+        >>> reduce = set_grid(SelectKBest(), k=[5, 10, 20])
+        >>> lr = set_grid(LogisticRegression(), C=[.1, 1, 10])
+        >>> pipe = Pipeline([('reduce', reduce),
+        ...                  ('clf', lr)])
+        >>> gs = make_grid_search(pipe)
+
+    becomes::
+
+        >>> reduce = set_grid(PCA(), n_components=[5, 10, 20])
+        >>> lr = set_grid(LogisticRegression(), C=[.1, 1, 10])
+        >>> pipe = Pipeline([('reduce', reduce),
+        ...                  ('clf', lr)])
+        >>> gs = make_grid_search(pipe)
+
+Searching over multiple grids.
+    You want to take the code from the previous example, but instead search
+    over feature selection and PCA reduction in the same search.
+
+    Without ``searchgrid``::
+
+        >>> pipe = Pipeline([('reduce', None),
+        ...                  ('clf', LogisticRegression())])
+        >>> gs = GridSearchCV(pipe, [{'reduce': [SelectKBest()],
+        ...                           'reduce__k': [5, 10, 20],
+        ...                           'clf__C': [.1, 1, 10]},
+        ...                          {'reduce': [PCA()],
+        ...                           'reduce__n_components': [5, 10, 20],
+        ...                           'clf__C': [.1, 1, 10]}])
+
+    With ``searchgrid``::
+
+        >>> kbest = set_grid(SelectKBest(), k=[5, 10, 20])
+        >>> pca = set_grid(PCA(), n_components=[5, 10, 20])
+        >>> lr = set_grid(LogisticRegression(), C=[.1, 1, 10])
+        >>> pipe = set_grid(Pipeline([('reduce', None),
+        ...                           ('clf', lr)]),
+        ...                 reduce=[kbest, pca])
+        >>> gs = make_grid_search(pipe)
+
 
 .. |py-versions| image:: https://img.shields.io/pypi/pyversions/Django.svg
     :alt: Python versions supported
