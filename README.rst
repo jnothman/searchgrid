@@ -6,7 +6,7 @@ Helps building parameter grids for :ref:`scikit-learn grid search
 
 |version| |licence| |py-versions|
 
-|build| |docs| |coverage|
+|issues| |build| |docs| |coverage|
 
 Specifying a parameter grid for
 :class:`~sklearn.model_selection.GridSearchCV`
@@ -146,6 +146,10 @@ Searching over multiple grids.
     :alt: Travis CI build status
     :scale: 100%
     :target: https://travis-ci.org/jnothman/searchgrid
+
+.. |issues| image:: https://img.shields.io/github/issues/jnothman/searchgrid.svg
+    :alt: Issue tracker
+    :target: https://github.com/jnothman/searchgrid
 
 .. |coverage| image:: https://coveralls.io/repos/github/jnothman/searchgrid/badge.svg
     :alt: Test coverage
