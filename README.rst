@@ -18,13 +18,13 @@ in Scikit-Learn can be annoying, particularly when:
 -  you are searching over multiple grids (i.e. your ``param_grid`` is a
    list) and you want to make a change to all of those grids
 
-``searchgrid`` associates the parameters you want to search with each
-particular estimator object, making it much more straightforward to
+``searchgrid`` allows you to define (and change) the grid together with the
+esimator, reducing effort and sometimes code.
+It stores the parameters you want to search on each particular estimator
+object. This makes it much more straightforward to
 specify complex parameter grids, and means you don't need to update your
 grid when you change the structure of your composite estimator.
 
-``searchgrid`` allows you to define (and change) the grid together with the
-esimator, reducing effort and sometimes code.
 
 It provides two main functions:
 
@@ -50,7 +50,7 @@ the way.::
 Wrapping an estimator in a pipeline.
     You had code which searched over parameters for a classifier.
     Now you want to search for that classifier in a Pipeline.
-    With plain old scikit-learn, you have to change::
+    With plain old scikit-learn, you have to insert ``__``\ s and change::
 
         >>> gs = GridSearchCV(LogisticRegression(), {'C': [.1, 1, 10]})
 
@@ -74,7 +74,7 @@ Wrapping an estimator in a pipeline.
 
 
 You want to change the estimator being searched in a pipeline.
-    With scikit-learn, you have to change::
+    With scikit-learn, to use PCA instead of SelectKBest, you change::
 
         >>> pipe = Pipeline([('reduce', SelectKBest()),
         ...                  ('clf', LogisticRegression())])
@@ -89,6 +89,8 @@ You want to change the estimator being searched in a pipeline.
         >>> gs = GridSearchCV(pipe,
         ...                   {'reduce__n_components': [5, 10, 20],
         ...                    'clf__C': [.1, 1, 10]})
+
+    Note that ``reduce__k`` became ``reduce__n_components``.
 
     With ``searchgrid`` it's easier because you change the estimator and the
     parameters in the same place::
