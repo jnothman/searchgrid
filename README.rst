@@ -25,7 +25,6 @@ object. This makes it much more straightforward to
 specify complex parameter grids, and means you don't need to update your
 grid when you change the structure of your composite estimator.
 
-
 It provides two main functions:
 
 -  :func:`searchgrid.set_grid` is used to specify the parameter values to be
@@ -33,6 +32,20 @@ It provides two main functions:
 -  :func:`searchgrid.make_grid_search` is used to construct the
    ``GridSearchCV`` object using the parameter space the estimator is annotated
    with.
+
+Quick Start
+...........
+
+If scikit-learn is installed, then, in a terminal::
+
+    pip install searchgrid
+
+and use in Python::
+
+    from search_grid import set_grid, make_grid_search
+    estimator = set_grid(MyEstimator(), param=[value1, value2, value3])
+    search = make_grid_search(estimator, cv=..., scoring=...)
+    search.fit(X, y)
 
 Motivating examples
 ...................
