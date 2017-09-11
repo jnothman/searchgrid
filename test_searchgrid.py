@@ -3,7 +3,8 @@ from sklearn.pipeline import Pipeline, make_pipeline
 from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression, SGDClassifier
 from sklearn.feature_selection import SelectKBest
-from searchgrid import set_grid, build_param_grid
+from sklearn.datasets import load_iris
+from searchgrid import set_grid, build_param_grid, make_grid_search
 
 
 @pytest.mark.parametrize(('estimator', 'param_grid'), [
@@ -45,3 +46,21 @@ def test_build_param_grid_set_estimator():
                    'clf__degree': [2, 3], 'sel__k': [2, 3]},
                   {'clf': [clf2, clf4], 'sel__k': [2, 3]}]
     assert build_param_grid(estimator) == param_grid
+
+
+def test_make_grid_search():
+    X, y = load_iris(return_X_y=True)
+    lr = LogisticRegression()
+    svc = set_grid(SVC(), kernel=['poly'], degree=[2, 3])
+    gs1 = make_grid_search(lr, cv=5)  # empty grid
+    gs2 = make_grid_search(svc, cv=5)
+    gs3 = make_grid_search([lr, svc], cv=5)
+    for gs, n_results in [(gs1, 1), (gs2, 2), (gs3, 3)]:
+        gs.fit(X, y)
+        assert gs.cv == 5
+        assert len(gs.cv_results_['params']) == n_results
+
+    svc_mask = gs3.cv_results_['param_root'] == svc
+    assert svc_mask.sum() == 2
+    assert gs3.cv_results_['param_root__degree'][svc_mask].tolist() == [2, 3]
+    assert gs3.cv_results_['param_root'][~svc_mask].tolist() == [lr]

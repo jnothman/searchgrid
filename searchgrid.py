@@ -1,7 +1,8 @@
-from collections import Mapping
-import itertools
+from collections import Mapping as _Mapping
+import itertools as _itertools
 
 from sklearn.model_selection import GridSearchCV as _GridSearchCV
+from sklearn.pipeline import Pipeline as _Pipeline
 
 
 def set_grid(estimator, **grid):
@@ -32,7 +33,7 @@ def _update_grid(dest, src, prefix=None):
         src = [{prefix + k: v for k, v in d.items()}
                for d in src]
     out = []
-    for d1, d2 in itertools.product(dest, src):
+    for d1, d2 in _itertools.product(dest, src):
         out_d = d1.copy()
         out_d.update(d2)
         out.append(out_d)
@@ -41,7 +42,7 @@ def _update_grid(dest, src, prefix=None):
 
 def _build_param_grid(estimator):
     grid = getattr(estimator, '_param_grid', {})
-    if isinstance(grid, Mapping):
+    if isinstance(grid, _Mapping):
         grid = [grid]
 
     # handle estimator parameters having their own grids
@@ -100,14 +101,26 @@ def build_param_grid(estimator):
     return out
 
 
+def _check_estimator(estimator):
+    if isinstance(estimator, list):
+        estimator = set_grid(_Pipeline([('root', estimator[0])]),
+                             root=estimator)
+    elif not hasattr(estimator, 'fit'):
+        raise ValueError('Expected estimator, but %r does not have .fit'
+                         % estimator)
+    return estimator
+
+
 def make_grid_search(estimator, **kwargs):
     """Construct a GridSearchCV with the given estimator and its set grid
 
     Parameters
     ----------
-    estimator : scikit-learn compatible estimator
+    estimator : (list of) estimator
+        When a list, the estimators are searched over.
     kwargs
         Other parameters to the
         :class:`sklearn.model_selection.GridSearchCV` constructor.
     """
+    estimator = _check_estimator(estimator)
     return _GridSearchCV(estimator, build_param_grid(estimator), **kwargs)
