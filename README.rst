@@ -47,6 +47,11 @@ and use in Python::
     search = make_grid_search(estimator, cv=..., scoring=...)
     search.fit(X, y)
 
+Or search for the best among multiple distinct estimators/pipelines::
+
+    search = make_grid_search([estimator1, estimator2], cv=..., scoring=...)
+    search.fit(X, y)
+
 Motivating examples
 ...................
 
@@ -146,7 +151,6 @@ Searching over multiple grids.
         ...                           ('clf', lr)]),
         ...                 reduce=[kbest, pca])
         >>> gs = make_grid_search(pipe)
-
 
 .. |py-versions| image:: https://img.shields.io/pypi/pyversions/Django.svg
     :alt: Python versions supported
