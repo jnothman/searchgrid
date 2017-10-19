@@ -152,7 +152,7 @@ Searching over multiple grids.
         ...                 reduce=[kbest, pca])
         >>> gs = make_grid_search(pipe)
 
-.. |py-versions| image:: https://img.shields.io/pypi/pyversions/Django.svg
+.. |py-versions| image:: https://img.shields.io/pypi/pyversions/searchgrid.svg
     :alt: Python versions supported
 
 .. |version| image:: https://badge.fury.io/py/searchgrid.svg
