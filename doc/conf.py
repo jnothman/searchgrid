@@ -66,7 +66,7 @@ copyright = u'2017, Joel Nothman'
 # The short X.Y version.
 
 version = '0.1'
-release = '0.1a1'
+release = '0.1'
 
 # version = searchgrid.__version__
 # The full version, including alpha/beta/rc tags.
