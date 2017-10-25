@@ -1,10 +1,12 @@
 import pytest
-from sklearn.pipeline import Pipeline, make_pipeline
+from sklearn.pipeline import Pipeline, FeatureUnion
+from sklearn.pipeline import make_pipeline as skl_make_pipeline
 from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression, SGDClassifier
-from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import SelectKBest, SelectPercentile
 from sklearn.datasets import load_iris
 from searchgrid import set_grid, build_param_grid, make_grid_search
+from searchgrid import make_pipeline, make_union
 
 
 @pytest.mark.parametrize(('estimator', 'param_grid'), [
@@ -12,22 +14,11 @@ from searchgrid import set_grid, build_param_grid, make_grid_search
      {'C': [1, 2]}),
     (set_grid(SVC(), C=[1, 2], gamma=[1, 2]),
      {'C': [1, 2], 'gamma': [1, 2]}),
-    (make_pipeline(set_grid(SVC(), C=[1, 2], gamma=[1, 2])),
+    (skl_make_pipeline(set_grid(SVC(), C=[1, 2], gamma=[1, 2])),
      {'svc__C': [1, 2], 'svc__gamma': [1, 2]}),
 ])
 def test_build_param_grid(estimator, param_grid):
     assert build_param_grid(estimator) == param_grid
-
-#    pytest.mark.xfail(
-#        (set_grid(SVC(), [{'kernel': ['linear']},
-#                          {'kernel': 'rbf', 'gamma': [1, 2]}]),
-#         [{'kernel': ['linear']}, {'kernel': 'rbf', 'gamma': [1, 2]}])),
-#    pytest.mark.xfail(
-#        (make_pipeline(set_grid(SVC(), [{'kernel': ['linear']},
-#                                        {'kernel': ['rbf'],
-#                                         'gamma': [1, 2]}])),
-#         [{'svc__kernel': ['linear']},
-#          {'svc__kernel': 'rbf', 'svc__gamma': [1, 2]}])),
 
 
 def test_build_param_grid_set_estimator():
@@ -64,3 +55,42 @@ def test_make_grid_search():
     assert svc_mask.sum() == 2
     assert gs3.cv_results_['param_root__degree'][svc_mask].tolist() == [2, 3]
     assert gs3.cv_results_['param_root'][~svc_mask].tolist() == [lr]
+
+
+def test_make_pipeline():
+    t1 = SelectKBest()
+    t2 = SelectKBest()
+    t3 = SelectKBest()
+    t4 = SelectKBest()
+    t5 = SelectPercentile()
+    t6 = SelectKBest()
+    t7 = SelectKBest()
+    t8 = SelectKBest()
+    t9 = SelectPercentile()
+    in_steps = [[t1, None],
+                [t2, t3],
+                [t4, t5],  # mixed
+                t6,
+                [None, t7],
+                [t8, None, t9],  # mixed
+                None]
+    pipe = make_pipeline(*in_steps, memory='/path/to/nowhere')
+    union = make_union(*in_steps)
+
+    for est, est_steps in [(pipe, pipe.steps),
+                           (union, union.transformer_list)]:
+        names, steps = zip(*est_steps)
+        assert names == ('selectkbest-1', 'selectkbest-2', 'alt-1',
+                         'selectkbest-3', 'selectkbest-4', 'alt-2', 'nonetype')
+        assert steps == (t1, t2, t4, t6, None, t8, None)
+
+        assert len(est._param_grid) == 5
+        assert est._param_grid[names[0]] == [t1, None]
+        assert est._param_grid[names[1]] == [t2, t3]
+        assert est._param_grid[names[2]] == [t4, t5]
+        assert est._param_grid[names[4]] == [None, t7]
+        assert est._param_grid[names[5]] == [t8, None, t9]
+
+    assert type(pipe) is Pipeline
+    assert type(union) is FeatureUnion
+    assert pipe.memory == '/path/to/nowhere'
