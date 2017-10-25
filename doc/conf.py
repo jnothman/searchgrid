@@ -41,6 +41,7 @@ extensions = [
     'numpydoc',
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
+    'sphinx_issues',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -65,8 +66,8 @@ copyright = u'2017, Joel Nothman'
 #
 # The short X.Y version.
 
-version = '0.1'
-release = '0.1'
+version = '0.2-dev'
+release = '0.2-dev'
 
 # version = searchgrid.__version__
 # The full version, including alpha/beta/rc tags.
@@ -88,7 +89,7 @@ exclude_patterns = ['_build']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
-# default_role = None
+default_role = 'any'
 
 # If true, '()' will be appended to :func: etc. cross-reference text.
 # add_function_parentheses = True
@@ -255,3 +256,10 @@ intersphinx_mapping = {
     'python': ('http://docs.python.org/', None),
     'scikit-learn': ('http://scikit-learn.org/stable/', None),
 }
+
+
+# Config for sphinx_issues
+
+issues_uri = 'https://github.com/jnothman/searchgrid/issues/{issue}'
+issues_github_path = 'jnothman/searchgrid'
+issues_user_uri = 'https://github.com/{user}'

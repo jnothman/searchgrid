@@ -2,3 +2,4 @@ numpy
 scipy
 scikit-learn
 numpydoc
+sphinx-issues

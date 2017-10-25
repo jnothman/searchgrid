@@ -5,3 +5,8 @@ API Reference
 
 .. automodule:: searchgrid
    :members:
+
+Changelog
+.........
+
+.. include:: ../CHANGELOG.rst

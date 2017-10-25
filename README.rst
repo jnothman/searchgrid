@@ -1,16 +1,15 @@
-``searchgrid`` documentation
+searchgrid documentation
 ============================
 
-Helps building parameter grids for :ref:`scikit-learn grid search
+Helps building parameter grids for `scikit-learn grid search
 <scikit-learn:grid_search>`.
 
 |version| |licence| |py-versions|
 
 |issues| |build| |docs| |coverage|
 
-Specifying a parameter grid for
-:class:`~sklearn.model_selection.GridSearchCV`
-in Scikit-Learn can be annoying, particularly when:
+Specifying a parameter grid for `sklearn.model_selection.GridSearchCV <GridSearchCV>` in
+Scikit-Learn can be annoying, particularly when:
 
 -  you change your code to wrap some estimator in, say, a ``Pipeline``
    and then need to prefix all the parameters in the grid using lots of
@@ -18,7 +17,7 @@ in Scikit-Learn can be annoying, particularly when:
 -  you are searching over multiple grids (i.e. your ``param_grid`` is a
    list) and you want to make a change to all of those grids
 
-``searchgrid`` allows you to define (and change) the grid together with the
+searchgrid allows you to define (and change) the grid together with the
 esimator, reducing effort and sometimes code.
 It stores the parameters you want to search on each particular estimator
 object. This makes it much more straightforward to
@@ -27,9 +26,9 @@ grid when you change the structure of your composite estimator.
 
 It provides two main functions:
 
--  :func:`searchgrid.set_grid` is used to specify the parameter values to be
+-  `searchgrid.set_grid` is used to specify the parameter values to be
    searched for an estimator or GP kernel.
--  :func:`searchgrid.make_grid_search` is used to construct the
+-  `searchgrid.make_grid_search` is used to construct the
    ``GridSearchCV`` object using the parameter space the estimator is annotated
    with.
 
@@ -84,7 +83,7 @@ Wrapping an estimator in a pipeline.
         ...                             ('clf', LogisticRegression())]),
         ...                   {'clf__C': [.1, 1, 10]})
 
-    With ``searchgrid`` we only have to wrap our classifier in a Pipeline, and
+    With searchgrid we only have to wrap our classifier in a Pipeline, and
     do not have to change the parameter grid, adding the ``clf__`` prefix. From::
 
         >>> lr = set_grid(LogisticRegression(), C=[.1, 1, 10])
@@ -116,7 +115,7 @@ You want to change the estimator being searched in a pipeline.
 
     Note that ``reduce__k`` became ``reduce__n_components``.
 
-    With ``searchgrid`` it's easier because you change the estimator and the
+    With searchgrid it's easier because you change the estimator and the
     parameters in the same place::
 
         >>> reduce = set_grid(SelectKBest(), k=[5, 10, 20])
@@ -137,7 +136,7 @@ Searching over multiple grids.
     You want to take the code from the previous example, but instead search
     over feature selection and PCA reduction in the same search.
 
-    Without ``searchgrid``::
+    Without searchgrid::
 
         >>> pipe = Pipeline([('reduce', None),
         ...                  ('clf', LogisticRegression())])
@@ -148,7 +147,7 @@ Searching over multiple grids.
         ...                           'reduce__n_components': [5, 10, 20],
         ...                           'clf__C': [.1, 1, 10]}])
 
-    With ``searchgrid``::
+    With searchgrid::
 
         >>> kbest = set_grid(SelectKBest(), k=[5, 10, 20])
         >>> pca = set_grid(PCA(), n_components=[5, 10, 20])

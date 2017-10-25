@@ -50,8 +50,16 @@ def _build_param_grid(estimator):
     # handle estimator parameters having their own grids
     for param_name, value in estimator.get_params().items():
         if '__' not in param_name and hasattr(value, 'get_params'):
-            grid = _update_grid(grid, _build_param_grid(value),
-                                param_name + '__')
+            out = []
+            value_grid = _build_param_grid(value)
+            for sub_grid in grid:
+                if param_name in sub_grid:
+                    sub_grid = [sub_grid]
+                else:
+                    sub_grid = _update_grid([sub_grid], value_grid,
+                                            param_name + '__')
+                out.extend(sub_grid)
+            grid = out
 
     # handle grid values having their own grids
     out = []
