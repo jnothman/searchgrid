@@ -48,6 +48,22 @@ def test_build_param_grid_set_estimator():
     assert build_param_grid(estimator) == param_grid
 
 
+def test_regression():
+    lr = set_grid(LogisticRegression(), C=[1, 2, 3])
+    svc = SVC()
+    grid = build_param_grid(set_grid(Pipeline([('root', lr)]), root=[lr, svc]))
+
+    assert len(grid) == 2
+
+    assert lr in grid[0]['root']
+    assert svc not in grid[0]['root']
+    assert 'root__C' in grid[0]
+
+    assert svc in grid[1]['root']
+    assert lr not in grid[1]['root']
+    assert 'root__C' not in grid[1]
+
+
 def test_make_grid_search():
     X, y = load_iris(return_X_y=True)
     lr = LogisticRegression()

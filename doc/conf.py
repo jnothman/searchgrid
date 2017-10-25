@@ -41,6 +41,7 @@ extensions = [
     'numpydoc',
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
+    'sphinx_issues',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -65,8 +66,8 @@ copyright = u'2017, Joel Nothman'
 #
 # The short X.Y version.
 
-version = '0.1'
-release = '0.1'
+version = '0.1.1'
+release = '0.1.1'
 
 # version = searchgrid.__version__
 # The full version, including alpha/beta/rc tags.
