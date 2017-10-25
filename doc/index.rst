@@ -9,4 +9,4 @@ API Reference
 Changelog
 .........
 
-.. include:: ../README.rst
+.. include:: ../CHANGELOG.rst
