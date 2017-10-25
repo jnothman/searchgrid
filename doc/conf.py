@@ -256,3 +256,10 @@ intersphinx_mapping = {
     'python': ('http://docs.python.org/', None),
     'scikit-learn': ('http://scikit-learn.org/stable/', None),
 }
+
+
+# Config for sphinx_issues
+
+issues_uri = 'https://github.com/jnothman/searchgrid/issues/{issue}'
+issues_github_path = 'jnothman/searchgrid'
+issues_user_uri = 'https://github.com/{user}'
