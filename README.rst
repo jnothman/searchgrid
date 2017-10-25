@@ -8,7 +8,7 @@ Helps building parameter grids for `scikit-learn grid search
 
 |issues| |build| |docs| |coverage|
 
-Specifying a parameter grid for `~sklearn.model_selection.GridSearchCV` in
+Specifying a parameter grid for `sklearn.model_selection.GridSearchCV <GridSearchCV>` in
 Scikit-Learn can be annoying, particularly when:
 
 -  you change your code to wrap some estimator in, say, a ``Pipeline``
