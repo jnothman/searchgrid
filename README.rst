@@ -160,6 +160,7 @@ Searching over multiple grids.
     And since you no longer care about step names, use
     `searchgrid.make_pipeline` to express alternative steps even more simply::
 
+        >>> from searchgrid import make_pipeline
         >>> kbest = set_grid(SelectKBest(), k=[5, 10, 20])
         >>> pca = set_grid(PCA(), n_components=[5, 10, 20])
         >>> lr = set_grid(LogisticRegression(), C=[.1, 1, 10])
