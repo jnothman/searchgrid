@@ -182,7 +182,7 @@ def make_pipeline(*steps, **kwargs):
         Each step is specified as one of:
 
         * an estimator instance
-        * None (corresponding to the )
+        * None (meaning no transformation)
         * a list of the above, indicating that a grid search should alternate
           over the estimators (or None) in the list
     kwargs
@@ -197,6 +197,7 @@ def make_pipeline(*steps, **kwargs):
     >>> from sklearn.decomposition import PCA
     >>> from sklearn.linear_model import LogisticRegression
     >>> from sklearn.ensemble import RandomForestClassifier
+    >>> from sklearn.model_selection import ParameterGrid
     >>> from searchgrid import make_pipeline, build_param_grid
     >>> pipe = make_pipeline(CountVectorizer(),
     ...                      [TfidfTransformer(), None],
@@ -209,8 +210,10 @@ def make_pipeline(*steps, **kwargs):
      ('tfidftransformer', TfidfTransformer(...)),
      ('alt-1', PCA(...)),
      ('alt-2', LogisticRegression(...))]
-    >>> import pprint
-    >>> pprint.pprint(list(build_param_grid(pipe)))
+    >>> n_combinations = len(ParameterGrid(build_param_grid(pipe)))
+    >>> n_combinations
+    ... # 2 * 2 * (3 + 1)
+    16
 
     Notes
     -----
@@ -235,7 +238,7 @@ def make_union(*transformers, **kwargs):
         Each step is specified as one of:
 
         * an estimator instance
-        * None (corresponding to the )
+        * None (meaning no features)
         * a list of the above, indicating that a grid search should alternate
           over the estimators (or None) in the list
     kwargs
