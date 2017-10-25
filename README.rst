@@ -33,6 +33,12 @@ It provides two main functions:
    ``GridSearchCV`` object using the parameter space the estimator is annotated
    with.
 
+Other utilities for constructing search spaces include:
+
+- `searchgrid.build_param_grid`
+- `searchgrid.make_pipeline`
+- `searchgrid.make_union`
+
 Quick Start
 ...........
 
@@ -150,6 +156,15 @@ Searching over multiple grids.
         >>> pipe = set_grid(Pipeline([('reduce', None),
         ...                           ('clf', lr)]),
         ...                 reduce=[kbest, pca])
+        >>> gs = make_grid_search(pipe)
+
+    And since you no longer care about step names, use
+    `searchgrid.make_pipeline` to express alternative steps even more simply::
+
+        >>> kbest = set_grid(SelectKBest(), k=[5, 10, 20])
+        >>> pca = set_grid(PCA(), n_components=[5, 10, 20])
+        >>> lr = set_grid(LogisticRegression(), C=[.1, 1, 10])
+        >>> pipe = make_pipeline([kbest, pca], lr)
         >>> gs = make_grid_search(pipe)
 
 .. |py-versions| image:: https://img.shields.io/pypi/pyversions/searchgrid.svg
