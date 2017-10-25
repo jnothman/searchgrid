@@ -1,16 +1,15 @@
 searchgrid documentation
 ============================
 
-Helps building parameter grids for :ref:`scikit-learn grid search
+Helps building parameter grids for `scikit-learn grid search
 <scikit-learn:grid_search>`.
 
 |version| |licence| |py-versions|
 
 |issues| |build| |docs| |coverage|
 
-Specifying a parameter grid for
-:class:`~sklearn.model_selection.GridSearchCV`
-in Scikit-Learn can be annoying, particularly when:
+Specifying a parameter grid for `~sklearn.model_selection.GridSearchCV` in
+Scikit-Learn can be annoying, particularly when:
 
 -  you change your code to wrap some estimator in, say, a ``Pipeline``
    and then need to prefix all the parameters in the grid using lots of
@@ -27,9 +26,9 @@ grid when you change the structure of your composite estimator.
 
 It provides two main functions:
 
--  :func:`searchgrid.set_grid` is used to specify the parameter values to be
+-  `searchgrid.set_grid` is used to specify the parameter values to be
    searched for an estimator or GP kernel.
--  :func:`searchgrid.make_grid_search` is used to construct the
+-  `searchgrid.make_grid_search` is used to construct the
    ``GridSearchCV`` object using the parameter space the estimator is annotated
    with.
 
