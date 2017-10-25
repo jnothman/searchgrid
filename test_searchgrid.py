@@ -48,7 +48,8 @@ def test_build_param_grid_set_estimator():
     assert build_param_grid(estimator) == param_grid
 
 
-def test_regression():
+def test_step_estimator_grid_not_shared():
+    # Fix for issue #10
     lr = set_grid(LogisticRegression(), C=[1, 2, 3])
     svc = SVC()
     grid = build_param_grid(set_grid(Pipeline([('root', lr)]), root=[lr, svc]))
