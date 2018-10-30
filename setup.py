@@ -14,7 +14,7 @@ def setup_package():
     try:
         # See setup.cfg
         setup(name='searchgrid',
-              version='0.2-dev',
+              version='0.2.0',
               py_modules=['searchgrid'],
               setup_requires=['pytest-runner'],
               tests_require=['pytest>=2.7', 'pytest-cov~=2.4'],
