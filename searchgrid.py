@@ -2,6 +2,7 @@ from collections import Mapping as _Mapping
 from collections import defaultdict as _defaultdict
 import itertools as _itertools
 
+from sklearn.compose import ColumnTransformer as _ColumnTransformer
 from sklearn.model_selection import GridSearchCV as _GridSearchCV
 from sklearn.pipeline import Pipeline as _Pipeline
 from sklearn.pipeline import FeatureUnion as _FeatureUnion
@@ -147,7 +148,7 @@ def _name_steps(steps, default='alt'):
         if len(estimators) > 1:
             while None in estimators:
                 estimators.remove(None)
-        step_names = {type(estimator).__name__.lower()
+        step_names = {_name_of_estimator(estimator)
                       for estimator in estimators}
         if len(step_names) > 1:
             names.append(default)
@@ -171,6 +172,19 @@ def _name_steps(steps, default='alt'):
     named_steps = list(zip(names, [step[0] for step in steps]))
     grid = {k: v for k, v in zip(names, steps) if len(v) > 1}
     return named_steps, grid
+
+
+def _name_of_estimator(estimator):
+    if isinstance(estimator, tuple):
+        # tuples comes from ColumnTransformers. At the moment,
+        # sklearn accepts both (estimator, 'name') and ('name', estimator)
+        tuple_types = {type(tuple_entry) for tuple_entry in estimator}
+        tuple_types.discard(str)
+        estimator_type = tuple_types.pop()
+    else:
+        estimator_type = type(estimator)
+
+    return estimator_type.__name__.lower()
 
 
 def make_pipeline(*steps, **kwargs):
@@ -257,3 +271,33 @@ def make_union(*transformers, **kwargs):
     """
     steps, grid = _name_steps(transformers)
     return set_grid(_FeatureUnion(steps, **kwargs), **grid)
+
+
+def make_column_transformer(*transformers, **kwargs):
+    """Construct a ColumnTransformer with alternative estimators to search over
+
+    Parameters
+    ----------
+    steps
+        Each step is specified as one of:
+
+        * an (estimator, column_name) or (column_name, estimator) tuple
+        * None (meaning no features)
+        * a list of the above, indicating that a grid search should alternate
+          over the estimators (or None) in the list
+    kwargs
+        Keyword arguments to the constructor of
+        :class:`sklearn.pipeline.FeatureUnion`.
+
+    Notes
+    -----
+    Each step is named according to the set of estimator types in its list:
+
+    * if a step has only one type of estimator (disregarding None), it takes
+      that estimator's class name (lowercased)
+    * if a step has estimators of mixed type, the step is named 'alt'
+    * if there are multiple steps of the same name using the above rules,
+      a suffix '-1', '-2', etc. is added.
+    """
+    steps, grid = _name_steps(transformers)
+    return set_grid(_ColumnTransformer(steps, **kwargs), **grid)
