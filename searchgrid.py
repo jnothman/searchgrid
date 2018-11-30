@@ -176,10 +176,10 @@ def _name_steps(steps, default='alt'):
 
 def _name_of_estimator(estimator):
     if isinstance(estimator, tuple):
-        # tuples comes from ColumnTransformers. At the moment,
-        # sklearn accepts both (estimator, 'name') and ('name', estimator)
+        # tuples comes from ColumnTransformers. At the moment, sklearn accepts
+        # both (estimator, list_of_columns) and (list_of_columns, estimator)
         tuple_types = {type(tuple_entry) for tuple_entry in estimator}
-        tuple_types.discard(str)
+        tuple_types.discard(list)
         estimator_type = tuple_types.pop()
     else:
         estimator_type = type(estimator)
@@ -281,7 +281,7 @@ def make_column_transformer(*transformers, **kwargs):
     steps
         Each step is specified as one of:
 
-        * an (estimator, column_name) or (column_name, estimator) tuple
+        * an (estimator, [column_names]) or ([column_names], estimator) tuple
         * None (meaning no features)
         * a list of the above, indicating that a grid search should alternate
           over the estimators (or None) in the list

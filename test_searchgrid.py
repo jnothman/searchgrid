@@ -114,15 +114,15 @@ def test_make_pipeline():
 
 
 def test_make_column_transformer():
-    t1 = (SelectKBest(), 'column1')
-    t2 = (SelectKBest(), 'column2')
-    t3 = (SelectKBest(), 'column3')
-    t4 = (SelectKBest(), 'column4')
-    t5 = (SelectPercentile(), 'column5')
-    t6 = (SelectKBest(), 'column6')
-    t7 = (SelectKBest(), 'column7')
-    t8 = (SelectKBest(), 'column8')
-    t9 = (SelectPercentile(), 'column9')
+    t1 = (SelectKBest(), ['column1'])
+    t2 = (SelectKBest(), ['column2a', 'column2b'])
+    t3 = (SelectKBest(), ['column3'])
+    t4 = (SelectKBest(), ['column4'])
+    t5 = (SelectPercentile(), ['column5'])
+    t6 = (SelectKBest(), ['column6a', 'column6b'])
+    t7 = (SelectKBest(), ['column7'])
+    t8 = (SelectKBest(), ['column8'])
+    t9 = (SelectPercentile(), ['column9'])
 
     in_steps = [[t1, None],
                 [t2, t3],
