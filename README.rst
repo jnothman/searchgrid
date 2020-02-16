@@ -47,7 +47,7 @@ If scikit-learn is installed, then, in a terminal::
 
 and use in Python::
 
-    from search_grid import set_grid, make_grid_search
+    from searchgrid import set_grid, make_grid_search
     estimator = set_grid(MyEstimator(), param=[value1, value2, value3])
     search = make_grid_search(estimator, cv=..., scoring=...)
     search.fit(X, y)
