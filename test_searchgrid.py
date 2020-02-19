@@ -6,7 +6,7 @@ from sklearn.linear_model import LogisticRegression, SGDClassifier
 from sklearn.feature_selection import SelectKBest, SelectPercentile
 from sklearn.datasets import load_iris
 from searchgrid import set_grid, build_param_grid, make_grid_search
-from searchgrid import make_pipeline, make_union
+from searchgrid import make_column_transformer, make_pipeline, make_union
 
 
 @pytest.mark.parametrize(('estimator', 'param_grid'), [
@@ -111,3 +111,36 @@ def test_make_pipeline():
     assert type(pipe) is Pipeline
     assert type(union) is FeatureUnion
     assert pipe.memory == '/path/to/nowhere'
+
+
+def test_make_column_transformer():
+    t1 = (SelectKBest(), ['column1'])
+    t2 = (SelectKBest(), ['column2a', 'column2b'])
+    t3 = (SelectKBest(), ['column3'])
+    t4 = (SelectKBest(), ['column4'])
+    t5 = (SelectPercentile(), ['column5'])
+    t6 = (SelectKBest(), ['column6a', 'column6b'])
+    t7 = (SelectKBest(), ['column7'])
+    t8 = (SelectKBest(), ['column8'])
+    t9 = (SelectPercentile(), ['column9'])
+
+    in_steps = [[t1, None],
+                [t2, t3],
+                [t4, t5],  # mixed
+                t6,
+                [None, t7],
+                [t8, None, t9],  # mixed
+                None]
+    column_transformer = make_column_transformer(*in_steps)
+    names, steps = zip(*column_transformer.transformers)
+
+    assert names == ('selectkbest-1', 'selectkbest-2', 'alt-1',
+                     'selectkbest-3', 'selectkbest-4', 'alt-2', 'nonetype')
+    assert steps == (t1, t2, t4, t6, None, t8, None)
+
+    assert len(column_transformer._param_grid) == 5
+    assert column_transformer._param_grid[names[0]] == [t1, None]
+    assert column_transformer._param_grid[names[1]] == [t2, t3]
+    assert column_transformer._param_grid[names[2]] == [t4, t5]
+    assert column_transformer._param_grid[names[4]] == [None, t7]
+    assert column_transformer._param_grid[names[5]] == [t8, None, t9]
